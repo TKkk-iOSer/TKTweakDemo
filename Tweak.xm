@@ -18,9 +18,14 @@
 
 %new
 - (void)helloWorld {
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"hello World" message:nil preferredStyle:UIAlertControllerStyleAlert];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDestructive handler:nil]];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    UIAlertController *alertController = ({
+        UIAlertController *al = [UIAlertController alertControllerWithTitle:@"hello World" message:nil preferredStyle:UIAlertControllerStyleAlert];
+        [al addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDestructive handler:nil]];
+        [al addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+
+        al;
+    });
+
     [self presentViewController:alertController animated:YES completion:nil];
 }
 %end

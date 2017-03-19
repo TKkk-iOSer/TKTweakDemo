@@ -8,7 +8,7 @@ if [ ! -d ~/Desktop/tk-tweak-temp-folder/ ]; then
 	echo "在 Desktop 创建tk-tweak-temp-folder"
 	mkdir ~/Desktop/tk-tweak-temp-folder
 
-else 
+else
 	rm -rf ~/Desktop/tk-tweak-temp-folder/*
 fi
 
@@ -46,12 +46,12 @@ rm -rf ~/Desktop/tk-tweak-temp-folder/$APPLICATION/*watch*
 rm -rf ~/Desktop/tk-tweak-temp-folder/$APPLICATION/*Watch*
 
 
-echo "请输入Y 完成" ${DYLIB##*/} "的注入:"
+echo "是否注入" ${DYLIB##*/} ":(Y/N)"
 
 insert_dylib  @executable_path/${DYLIB##*/} $APPLICATION/${APPLICATION%.*} > insert_dylib.log
 
 echo "注入成功"
-cd $APPLICATION 
+cd $APPLICATION
 
 rm -rf ${APPLICATION%.*}
 mv ${APPLICATION%.*}_patched ${APPLICATION%.*}
