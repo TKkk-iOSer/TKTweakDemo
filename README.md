@@ -238,6 +238,7 @@ install_name_tool -change /Library/Frameworks/CydiaSubstrate.framework/CydiaSubs
 
 ![注入动态库.png](http://upload-images.jianshu.io/upload_images/965383-4269d4c6241ec0f2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 ~~之所以能够不使用./是因为已经将 insert_dylib 导入到/usr/local/bin目录中~~
+**注入成功后将app目录中的 WeChat 删除，将 WeChat_patched 改为WeChat。**
 **warm ：使用 insert_dylib 时若出现 error 记得修改权限， `chmod 777 insert_dylib`**
 
 ---
