@@ -1,7 +1,8 @@
 [TOC]
 # iOS 逆向 - helloworld
 
-##一、 前言   
+## 一、 前言
+
 本篇主要制作某信的 tweak，实现在非越狱版的手机上进行 hello World 弹窗，从而熟悉 iOS 逆向相关的工具(~~不包含lldb远程调试、反汇编技术等~~)，以及了解 tweak 的主要流程(~~其实就是如何制作插件的过程~~)。
 
 >warm：本篇只是我在操作过程中的一点总结，并不深入讲解原理。若想深入了解可以查看==iOS应用逆向工程(第2版)==或者看文章最后的参考文档。
@@ -16,8 +17,11 @@
 * *主要流程： 砸壳 ==> 获取ipa ==> 制作tweak ==> 查看(更改)依赖库 ==> 注入动态库 ==> 打包重签名 ==> 安装*
 
 ---
-##二、 正文  
-###1. SSH  服务
+
+## 二、 正文 
+
+### 1. SSH  服务
+
 > 实现在越狱手机上远程进行ssh服务
 
 OpenSSH 在 Cydia 中安装 OpenSSH
@@ -39,7 +43,9 @@ scp ~/Desktop/1.png root@192.168.1.6:/var/tmp/
 **注意，OpenSSH 默认登录密码为 ==alpine== ，iOS 上的用户只有 root 与 mobile，修改密码使用`passwd root（mobile）`**
 
 ----
-###2. 砸壳
+
+### 2. 砸壳
+
 > 用来在越狱手机上获取ipa
 
 ==PS:可直接使用[PP助手](http://pro.25pp.com/pp_mac_ios)下载越狱版本的 ipa 文件(~~我就是这么懒得~~)==
@@ -75,7 +81,9 @@ clutch 将砸过后的 ipa 文件放到了`/private/var/mobile/Documents/Dumped/
 $ scp root@<your.device.ip>:/private/var/mobile/Documents/Dumped/xx.ipa ~/Desktop
 ```
 ---
-###3. 导头文件（查看 app 相关头文件的信息）
+
+### 3. 导头文件（查看 app 相关头文件的信息）
+
 >dump 目标对象的 class 信息的工具。
 
 [class-dump](http://stevenygard.com/projects/class-dump/)
@@ -87,7 +95,9 @@ class-dump -S -s -H demo.app -o ~/Document/headers/
 ```
 
 ---
-###4. 制作 dylib 动态库
+
+### 4. 制作 dylib 动态库
+
 > 制作我们要注入的 dylib 动态库   
 
 本文章使用的是 [theos](https://github.com/theos/theos)
@@ -95,7 +105,7 @@ class-dump -S -s -H demo.app -o ~/Document/headers/
 PS:也可以使用[iOSOpenDev](http://iosopendev.com/)
 >iOSOpenDev 集成在 Xcode 中，提供了一些模板，可直接使用 Xcode 进行开发。只是这个工具停止更新，对高版本的 Xcode 不能很好地支持。本人装了多次老是失败，虽然最后在 Xcode 中有看到该工具，也不确定是否安装成功。若装失败可参考[iOSOpenDev Wiki](https://github.com/kokoabim/iOSOpenDev/wiki)
 
-####4.1 安装并配置 theos
+#### 4.1 安装并配置 theos
 从 github 下载至`opt/theos/`
 
 ```
@@ -112,7 +122,9 @@ sudo chown -R $(id -u):$(id -g) /opt/theos
 export PATH=/opt/theos/bin:$PATH
 export THEOS=/opt/theos
 ```
-####4.2 创建tweak
+
+#### 4.2 创建tweak
+
 使用 `nic.pl` 创建 tweak
 ~~若提示无此命令请根据上一步骤配置环境变量，或者不嫌麻烦使用`/opt/theos/bin/nic.pl`~~
 根据提示选择 ==iphone/tweak==，接着分别输入
@@ -152,7 +164,8 @@ export THEOS=/opt/theos
 * ==Tweak.xm== ：重点文件，用来编写 hook 代码,因为支持`Logos`和`C/C++`语法，可以让我们不用去写一些 runtime 方法(~~必要时候还是要写~~)从而进行 hook 。
 > .x 文件支持Logos语法，.xm 文件支持Logos和C/C++语法。
 
-####4.3 Logos 常用语法
+#### 4.3 Logos 常用语法
+
 * `%hook`   
     指定需要 hook 的类，以`%end`结尾。
 * `%orig`   
@@ -166,11 +179,13 @@ export THEOS=/opt/theos
 
 > `%hook`、`%log`、`%orig` 等都是 `mobilesubstrate` 的 `MobileHooker` 模块提供的宏，除此之外还有 `%group` `%init`、 `%ctor`等,其实也就是把 `method swizzling` 相关的方法封装成了各种宏标记，若想深入了解，请左转 [Google](www.google.com)       
 
-####4.4 编写 tweak.xm
+#### 4.4 编写 tweak.xm
+
 熟悉各种语法之后便可以进行编写代码了，其中`MMUIViewController`为某信的基础的ViewController。我们通过 hook `viewDidApper:` 来进行 hello World 弹窗。
 ![tweak.xm.png](http://upload-images.jianshu.io/upload_images/965383-2a245ca9f43e31b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-####4.5 编译
+#### 4.5 编译
+
 使用`make`进行编译
 若想重新编译记得先`make clean`(~~感谢我的嵌入式老师，让我还记得这个~~)
 `make`后在当前文件夹下面将生成两个文件夹:`.theos` 与 `obj`,其中我们编译完成的动态库就在`.thoes/obj/debug`的下面，与工程名相同。
@@ -179,8 +194,9 @@ export THEOS=/opt/theos
 ![make.png](http://upload-images.jianshu.io/upload_images/965383-301fc12dbaa0e8c7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ---
-###5. 查看（修改）依赖
-####5.1 otool
+
+### 5. 查看（修改）依赖
+#### 5.1 otool
 > 查看执行文件所依赖的库文件
 
 ```
@@ -194,7 +210,7 @@ otool -L TKDemo.dylib
 >CydiaSubstrate 只有越狱的手机上才有，因此需要我们手动更改并导入。
 
 ---
-####5.2 更换动态库的依赖
+#### 5.2 更换动态库的依赖
 
 ```
 install_name_tool -change /Library/Frameworks/CydiaSubstrate.framework/CydiaSubstrate @loader_path/libsubstrate.dylib tkchat.dylib  
@@ -205,7 +221,7 @@ install_name_tool -change /Library/Frameworks/CydiaSubstrate.framework/CydiaSubs
 
 ---
 
-###6. 动态库注入
+### 6. 动态库注入
 >把我们写的动态库注入到要 hook 的二进制文件
 
 [insert_dylib](https://github.com/gengjf/insert_dylib)
@@ -225,7 +241,7 @@ install_name_tool -change /Library/Frameworks/CydiaSubstrate.framework/CydiaSubs
 **warm ：使用 insert_dylib 时若出现 error 记得修改权限， `chmod 777 insert_dylib`**
 
 ---
-###7. 打包、重签名、安装
+### 7. 打包、重签名、安装
 使用图形化打包签名工具 [ios-app-signer](https://github.com/DanTheMan827/ios-app-signer)
 > 选择相应的证书与 Provisioning Profile 文件进行打包。
 
@@ -240,13 +256,13 @@ install_name_tool -change /Library/Frameworks/CydiaSubstrate.framework/CydiaSubs
 也可使用[PP助手](http://pro.25pp.com/pp_mac_ios)进行安装。
 
 ---
-###8. hello World
+### 8. hello World
 > 最后就是我们的 hello World
 
 ![hello World.png](http://upload-images.jianshu.io/upload_images/965383-30bee467e5ec526d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ---
-###9. autoInsertDylib.sh 脚本
+### 9. autoInsertDylib.sh 脚本
 >由于以上的操作(查看更改依赖库、注入动态库)都类似且繁琐，个人懒癌，就写了这个sh。
 
 ==warm !!!==
@@ -339,11 +355,11 @@ open /Applications/iOS\ App\ Signer.app
 ```
 
 ---
-##三、 总结
+## 三、 总结
 以上就是整个 iOS 逆向的主要流程(~~虽然hook的代码很渣~~),其中注入动态库与打包重签名的工具不止一种，可以根据自己的爱好网上查找。本人也是踩了不少坑不断摸索来的，比如由于tweak工程名的问题，导致使用 `iOS App Signer` 打包重签名的一直error：==Error verifying code signature==。希望能给刚入iOS 逆向坑的人一点帮助。由于涉及只是工具的使用，涉及到的原理比较薄弱，希望各位可以去阅读下参考文档。
 
 ---
-##四、参考文档
+## 四、参考文档
 
 [iOS应用逆向工程 第2版](https://book.douban.com/subject/26363333/)
 
