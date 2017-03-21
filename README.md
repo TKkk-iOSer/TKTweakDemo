@@ -132,11 +132,11 @@ export THEOS=/opt/theos
 `Makefile          TKDemo.plist  Tweak.xm          control`
 
 * <a>Makefile</a> : 工程用到的文件、框架、库等信息。
-该文件过于简单，还需要添加一些信息。如
-指定处理器架构`ARCHS = armv7 arm64`
-指定SDK版本`TARGET = iphone:latest:8.0`
-导入所需的framework等等。   
-修改后的Makefile文件如下所示：
+该文件过于简单，还需要添加一些信息。如   
+指定处理器架构`ARCHS = armv7 arm64`   
+指定SDK版本`TARGET = iphone:latest:8.0`   
+导入所需的framework等等。      
+修改后的Makefile文件如下所示：   
 ![Makefile modified.png](http://upload-images.jianshu.io/upload_images/965383-ce48a5803e5e6c33.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
@@ -171,9 +171,9 @@ export THEOS=/opt/theos
 ![tweak.xm.png](http://upload-images.jianshu.io/upload_images/965383-2a245ca9f43e31b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 #### 4.5 编译
-使用`make`进行编译
-若想重新编译记得先`make clean`(~~感谢我的嵌入式老师，让我还记得这个~~)
-`make`后在当前文件夹下面将生成两个文件夹:`.theos` 与 `obj`,其中我们编译完成的动态库就在`.thoes/obj/debug`的下面，与工程名相同。
+使用`make`进行编译   
+若想重新编译记得先`make clean`(~~感谢我的嵌入式老师，让我还记得这个~~)   
+`make`后在当前文件夹下面将生成两个文件夹:`.theos` 与 `obj`,其中我们编译完成的动态库就在`.thoes/obj/debug`的下面，与工程名相同。   
 
 **若编译的时候提示找不到 `common.mk` 或者是 `tweak.mk`，请根据上述步骤（<a>4.1 安装并配置 theos</a>）重新 export theos，或写入至~/.bash_profile，或更改Makefile的文件，将`$(THEOS)/makefiles` 与 `$(THEOS_MAKE_PATH)` 替换成`opt/theos/makefiles`**
 ![make.png](http://upload-images.jianshu.io/upload_images/965383-301fc12dbaa0e8c7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
@@ -221,8 +221,8 @@ install_name_tool -change /Library/Frameworks/CydiaSubstrate.framework/CydiaSubs
 ```
 
 ![注入动态库.png](http://upload-images.jianshu.io/upload_images/965383-4269d4c6241ec0f2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-~~之所以能够不使用./是因为已经将 insert_dylib 导入到/usr/local/bin目录中~~
-**注入成功后将app目录中的 WeChat 删除，将 WeChat_patched 改为WeChat。**
+~~之所以能够不使用./是因为已经将 insert_dylib 导入到/usr/local/bin目录中~~   
+**注入成功后将app目录中的 WeChat 删除，将 WeChat_patched 改为WeChat。**   
 
 ![替换二进制文件.png](http://upload-images.jianshu.io/upload_images/965383-133336f434b7d1fb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -253,9 +253,9 @@ install_name_tool -change /Library/Frameworks/CydiaSubstrate.framework/CydiaSubs
 ### 9. autoInsertDylib.sh 脚本
 >由于以上的操作(查看更改依赖库、注入动态库)都类似且繁琐，个人懒癌，就写了这个sh。
 
-<a>warm !!!</a>
-<a>warm !!!</a>
-<a>warm !!!</a>
+<a>warm !!!</a>   
+<a>warm !!!</a>   
+<a>warm !!!</a>   
 **该脚本的中`insert_dylib`路径使用的是`/usr/local/bin`(~~请看前言~~),请根据自身环境更改脚本中的`insert_dylib`路径，以免错误。**
 
 **`iOS App Singer` 本人放在了`/Applications/`中，若Applications中没有，则在脚本执行完手动打开。**
