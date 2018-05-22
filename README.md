@@ -1,10 +1,10 @@
-[TOC]
+
 # iOS 逆向 -微信 helloWorld
 
 ## 一、 前言
 本篇主要制作微信的 tweak，实现在非越狱版的手机上进行 hello World 弹窗，从而熟悉 iOS 逆向相关的工具(~~不包含lldb远程调试、反汇编技术等~~)，以及了解 tweak 的主要流程(~~其实就是如何制作插件的过程~~)。
 
->warm：本篇只是我在操作过程中的一点总结，并不深入讲解原理。若想深入了解可以查看[iOS应用逆向工程 第2版](https://book.douban.com/subject/26363333/)或者看文章最后的参考文档。
+>warn：本篇只是我在操作过程中的一点总结，并不深入讲解原理。若想深入了解可以查看[iOS应用逆向工程 第2版](https://book.douban.com/subject/26363333/)或者看文章最后的参考文档。
 
 * 基本原理： 通过 app 启动时调用我们注入的动态库，从而进行 hook 。而之所以能够执行我们注入的动态库，是因为使用了`mobilesubstrate` 这个库，这个库能在程序运行的时候动态加载我们注入动态库。而非越狱手机里面是没有的，所以我们需要直接将这个库打包进 ipa 中，使用它的 API 实现注入。`mobilesubstrate` 库在下面的 github 中有提供，即是`libsubstrate.dylib`.
 
@@ -160,7 +160,7 @@ export THEOS=/opt/theos
 * `%new`   
      在`%hook`的内部使用，给 class 添加新方法，与`class_addMethod`相同。   
      与 Category 中添加方法的区别：Category 为编译时添加，`class_addMethod` 为动态添加。   
-**warm ：添加的方法需要在 @interface 中进行声明**
+**warn ：添加的方法需要在 @interface 中进行声明**
 * `%c`   
 获取一个类，等同于`objc_getClass`、`NSClassFromString`  
 
@@ -226,7 +226,7 @@ install_name_tool -change /Library/Frameworks/CydiaSubstrate.framework/CydiaSubs
 
 ![替换二进制文件.png](http://upload-images.jianshu.io/upload_images/965383-133336f434b7d1fb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-**warm ：使用 insert_dylib 时若出现 error 记得修改权限， `chmod 777 insert_dylib`**
+**warn ：使用 insert_dylib 时若出现 error 记得修改权限， `chmod 777 insert_dylib`**
 
 ---
 ### 7. 打包、重签名、安装
@@ -253,9 +253,9 @@ install_name_tool -change /Library/Frameworks/CydiaSubstrate.framework/CydiaSubs
 ### 9. autoInsertDylib.sh 脚本
 >由于以上的操作(查看更改依赖库、注入动态库)都类似且繁琐，个人懒癌，就写了这个sh。
 
-<a>warm !!!</a>   
-<a>warm !!!</a>   
-<a>warm !!!</a>   
+<a>warn !!!</a>   
+<a>warn !!!</a>   
+<a>warn !!!</a>   
 **该脚本的中`insert_dylib`路径使用的是`/usr/local/bin`(~~请看前言~~),请根据自身环境更改脚本中的`insert_dylib`路径，以免错误。**
 
 **`iOS App Singer` 本人放在了`/Applications/`中，若Applications中没有，则在脚本执行完手动打开。**
